@@ -1,0 +1,14 @@
+# .gitignore
+node_modules/
+.env
+.env.local
+.dist/
+.DS_Store
+coverage/
+android/.gradle/
+android/**/build/
+android/local.properties
+android/.idea/
+frontend/admin/node_modules/
+frontend/admin/dist/
+backend/.env
