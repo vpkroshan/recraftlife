@@ -10,8 +10,39 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'dev-super-secret-key-change-this-in-production';
 
-app.use(cors());
+// CORS Configuration - Allow requests from recraftlife.com and localhost
+const corsOptions = {
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      'https://recraftlife.com',
+      'http://recraftlife.com',
+      'https://www.recraftlife.com',
+      'http://www.recraftlife.com',
+      'http://localhost:3000',
+      'http://localhost:5173',
+      'http://127.0.0.1:3000',
+      'http://127.0.0.1:5173'
+    ];
+    
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS not allowed'));
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  maxAge: 86400
+};
+
+app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
+
+// Health check endpoint (no CORS issues)
+app.get('/health', (req, res) => {
+  res.json({ ok: true, service: 'recraftlife-api', timestamp: new Date().toISOString() });
+});
 
 // ⚠️  CHANGE THESE PASSWORDS BEFORE PRODUCTION ⚠️
 // These are demo accounts for testing only
@@ -113,22 +144,29 @@ function requireRole(role) {
   };
 }
 
-app.get('/health', (req, res) => {
-  res.json({ ok: true, service: 'recraftlife-api', timestamp: new Date().toISOString() });
-});
-
+// Auth endpoints
 app.post('/api/v1/auth/login', (req, res) => {
   const { email, password } = req.body;
+  
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' });
+  }
+
   const user = db.users.find((u) => u.email === email && u.password === password);
 
   if (!user) {
-    return res.status(401).json({ error: 'Invalid credentials' });
+    return res.status(401).json({ error: 'Invalid email or password' });
   }
 
-  res.json({
-    token: createToken(user),
-    user: { id: user.id, email: user.email, role: user.role, name: user.name }
-  });
+  try {
+    const token = createToken(user);
+    res.json({
+      token,
+      user: { id: user.id, email: user.email, role: user.role, name: user.name }
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create token' });
+  }
 });
 
 app.post('/api/v1/auth/register', (req, res) => {
@@ -155,6 +193,7 @@ app.post('/api/v1/auth/register', (req, res) => {
   res.status(201).json({ id: user.id, email: user.email, role: user.role });
 });
 
+// Submissions endpoints
 app.get('/api/v1/submissions', requireAuth, (req, res) => {
   const status = req.query.status;
   const filtered = status
@@ -186,6 +225,7 @@ app.get('/api/v1/submissions/:id', requireAuth, (req, res) => {
   res.json(submission);
 });
 
+// Offers endpoints
 app.post('/api/v1/offers', requireAuth, requireRole('admin'), (req, res) => {
   const { submissionId, value, currency = 'USD', validityDays = 7 } = req.body;
   const submission = db.submissions.find((s) => s.id === submissionId);
@@ -222,6 +262,7 @@ app.post('/api/v1/offers/:id/decision', requireAuth, (req, res) => {
   res.json({ ok: true, decision, chosenAction });
 });
 
+// Pickups endpoints
 app.post('/api/v1/pickups', requireAuth, (req, res) => {
   const { submissionId, date, slot } = req.body;
   const submission = db.submissions.find((s) => s.id === submissionId);
@@ -237,6 +278,7 @@ app.post('/api/v1/pickups', requireAuth, (req, res) => {
   res.status(201).json(submission.pickup);
 });
 
+// Payments endpoints
 app.post('/api/v1/payments', requireAuth, (req, res) => {
   const { submissionId, amount, currency = 'USD' } = req.body;
   const submission = db.submissions.find((s) => s.id === submissionId);
@@ -252,10 +294,12 @@ app.post('/api/v1/payments', requireAuth, (req, res) => {
   res.json(submission.payment);
 });
 
+// Admin endpoints
 app.get('/api/v1/admin/submissions', requireAuth, requireRole('admin'), (req, res) => {
   res.json({ data: db.submissions, total: db.submissions.length });
 });
 
+// Notifications endpoints
 app.get('/api/v1/notifications', requireAuth, (req, res) => {
   const notifications = db.notifications.filter(
     (n) => n.userId === req.user.sub || req.user.role === 'admin'
@@ -274,9 +318,15 @@ app.post('/api/v1/notifications', requireAuth, (req, res) => {
   res.status(201).json(notification);
 });
 
+// Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err);
-  res.status(500).json({ error: 'Internal server error' });
+  res.status(500).json({ error: 'Internal server error', message: err.message });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ error: 'Endpoint not found' });
 });
 
 const server = app.listen(PORT, () => {
