@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RecraftLife - E-Waste Recycling Platform</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f3f7f4;
+      color: #152a25;
+      line-height: 1.6;
+    }
+
+    nav {
+      background: linear-gradient(90deg, #143d33, #0f3029);
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    nav .logo {
+      font-weight: 800;
+      font-size: 1.4rem;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 24px;
+      font-weight: 600;
+    }
+
+    .hero {
+      text-align: center;
+      padding: 80px 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      color: #0a2420;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: #49615b;
+      margin-bottom: 24px;
+      line-height: 1.8;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    button, .btn {
+      padding: 14px 28px;
+      border: none;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 1rem;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .primary {
+      background: #2fa57c;
+      color: white;
+    }
+
+    .primary:hover {
+      background: #268a66;
+    }
+
+    .secondary {
+      background: white;
+      color: #2fa57c;
+      border: 2px solid #2fa57c;
+    }
+
+    .secondary:hover {
+      background: #f0f9f6;
+    }
+
+    .features {
+      padding: 60px 20px;
+      background: white;
+    }
+
+    .features h2 {
+      text-align: center;
+      margin-bottom: 48px;
+      font-size: 2rem;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: #f9fdfb;
+      padding: 28px;
+      border-radius: 16px;
+      border: 1px solid #e7efe9;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(17, 49, 42, 0.1);
+    }
+
+    .feature-card h3 {
+      font-size: 1.3rem;
+      margin-bottom: 12px;
+    }
+
+    .feature-card p {
+      color: #49615b;
+    }
+
+    .cta-section {
+      text-align: center;
+      padding: 60px 20px;
+      background: #143d33;
+      color: white;
+    }
+
+    .cta-section h2 {
+      font-size: 2rem;
+      margin-bottom: 16px;
+    }
+
+    .cta-section p {
+      font-size: 1.1rem;
+      margin-bottom: 24px;
+      opacity: 0.9;
+    }
+
+    footer {
+      background: #0f3029;
+      color: #d7efe5;
+      padding: 24px;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    footer a {
+      color: #45c08d;
+      text-decoration: none;
+      margin: 0 12px;
+    }
+
+    .status-badge {
+      background: #e7f7f0;
+      color: #1c815e;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: inline-block;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo">♻️ RecraftLife</div>
+    <div>
+      <a href="#features">Features</a>
+      <a href="/admin">Admin Dashboard</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <h1>Recycle Responsibly</h1>
+    <p>Submit your electronic waste, get an offer, and help the environment. RecraftLife makes e-waste recycling easy and rewarding.</p>
+    <div class="cta-buttons">
+      <a href="/admin" class="btn primary">Open Dashboard</a>
+      <a href="#features" class="btn secondary">Learn More</a>
+    </div>
+    <div class="status-badge">✓ Live on recraftlife.com</div>
+  </section>
+
+  <section class="features" id="features">
+    <h2>How RecraftLife Works</h2>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h3>📸 Submit</h3>
+        <p>Photograph your electronic item and provide basic details. Our system handles the rest.</p>
+      </div>
+      <div class="feature-card">
+        <h3>🤖 AI Analysis</h3>
+        <p>AI analyzes images and descriptions to suggest item details and value automatically.</p>
+      </div>
+      <div class="feature-card">
+        <h3>💰 Get an Offer</h3>
+        <p>Within 24 hours, receive a fair market offer for your device.</p>
+      </div>
+      <div class="feature-card">
+        <h3>🎯 Your Choice</h3>
+        <p>Sell for cash or donate for environmental impact. You decide.</p>
+      </div>
+      <div class="feature-card">
+        <h3>🚚 Free Pickup</h3>
+        <p>Schedule collection at your convenience. We handle the logistics.</p>
+      </div>
+      <div class="feature-card">
+        <h3>♻️ Certified Processing</h3>
+        <p>Items are responsibly recycled, refurbished, or donated with full transparency.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <h2>Ready to Recycle?</h2>
+    <p>Start your submission now and get an offer for your electronic waste.</p>
+    <a href="/admin" class="btn primary">Go to Dashboard</a>
+  </section>
+
+  <footer>
+    <p>&copy; 2024 RecraftLife. Recycle responsibly. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a> | <a href="#">Contact</a></p>
+  </footer>
+</body>
+</html>

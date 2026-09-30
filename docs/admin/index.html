@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RecraftLife Admin Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f4f8f5;
+      color: #152a25;
+    }
+
+    .login-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #143d33 0%, #0f3029 100%);
+    }
+
+    .login-box {
+      background: white;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .login-header h1 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .login-header p {
+      color: #49615b;
+      font-size: 0.95rem;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #e7efe9;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #2fa57c;
+      box-shadow: 0 0 0 3px rgba(47, 165, 124, 0.1);
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 12px;
+      background: #2fa57c;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .login-btn:hover {
+      background: #268a66;
+    }
+
+    .demo-credentials {
+      background: #f0f9f6;
+      border: 1px solid #d0e8e0;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 24px;
+      font-size: 0.85rem;
+    }
+
+    .demo-credentials h4 {
+      margin-bottom: 8px;
+      color: #0a2420;
+    }
+
+    .demo-credentials p {
+      margin: 4px 0;
+      color: #49615b;
+      font-family: monospace;
+    }
+
+    .error {
+      background: #ffe7e7;
+      color: #c00;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .dashboard {
+      display: none;
+      padding: 20px;
+    }
+
+    .dashboard.active {
+      display: block;
+    }
+
+    .topbar {
+      background: linear-gradient(90deg, #143d33, #0f3029);
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 8px;
+      margin-bottom: 24px;
+    }
+
+    .logout-btn {
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-card span {
+      display: block;
+      color: #49615b;
+      font-size: 0.9rem;
+    }
+
+    .stat-card strong {
+      display: block;
+      font-size: 2rem;
+      margin-top: 8px;
+    }
+
+    .submissions-table {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid #e7efe9;
+    }
+
+    th {
+      background: #f9fdfb;
+      font-weight: 700;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .status-submitted {
+      background: #fff4db;
+      color: #aa6a00;
+    }
+
+    .status-offer_sent {
+      background: #e9f7f0;
+      color: #1b865d;
+    }
+
+    .status-pickup_scheduled {
+      background: #e7eefc;
+      color: #1d4db3;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container" id="loginContainer">
+    <div class="login-box">
+      <div class="login-header">
+        <h1>♻️ RecraftLife</h1>
+        <p>Admin Dashboard</p>
+      </div>
+      
+      <div class="error" id="errorMsg"></div>
+      
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required value="admin@recraftlife.com">
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required value="Admin@2024!">
+        </div>
+        <button type="submit" class="login-btn">Login</button>
+      </form>
+
+      <div class="demo-credentials">
+        <h4>Demo Accounts</h4>
+        <p>Admin: admin@recraftlife.com / Admin@2024!</p>
+        <p>Customer: customer@recraftlife.com / Customer@2024!</p>
+        <p>Collector: collector@recraftlife.com / Collector@2024!</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard" id="dashboard">
+    <div class="topbar">
+      <h1>♻️ RecraftLife Operations Dashboard</h1>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span>New Submissions</span>
+        <strong>28</strong>
+      </div>
+      <div class="stat-card">
+        <span>Pending Offers</span>
+        <strong>12</strong>
+      </div>
+      <div class="stat-card">
+        <span>Scheduled Pickups</span>
+        <strong>9</strong>
+      </div>
+      <div class="stat-card">
+        <span>Processed This Month</span>
+        <strong>42</strong>
+      </div>
+    </div>
+
+    <div class="submissions-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Request ID</th>
+            <th>Customer</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Offer Value</th>
+          </tr>
+        </thead>
+        <tbody id="submissionsBody">
+          <tr>
+            <td>RCL-001</td>
+            <td>Jane Customer</td>
+            <td>Smartphone</td>
+            <td><span class="status-badge status-offer_sent">Offer Sent</span></td>
+            <td>$45</td>
+          </tr>
+          <tr>
+            <td>RCL-002</td>
+            <td>Sam Green</td>
+            <td>Laptop</td>
+            <td><span class="status-badge status-submitted">Submitted</span></td>
+            <td>Pending</td>
+          </tr>
+          <tr>
+            <td>RCL-003</td>
+            <td>Lisa Wright</td>
+            <td>Tablet</td>
+            <td><span class="status-badge status-pickup_scheduled">Pickup Scheduled</span></td>
+            <td>$30</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = 'https://recraftlife-api.vercel.app';
+
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        const response = await fetch(`${API_URL}/api/v1/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        if (!response.ok) {
+          throw new Error('Invalid credentials');
+        }
+
+        const data = await response.json();
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('dashboard').classList.add('active');
+
+        loadSubmissions(data.token);
+      } catch (error) {
+        document.getElementById('errorMsg').textContent = error.message;
+        document.getElementById('errorMsg').style.display = 'block';
+      }
+    });
+
+    async function loadSubmissions(token) {
+      try {
+        const response = await fetch(`${API_URL}/api/v1/admin/submissions`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Submissions:', data);
+        }
+      } catch (error) {
+        console.error('Error loading submissions:', error);
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      document.getElementById('dashboard').classList.remove('active');
+      document.getElementById('loginContainer').style.display = 'flex';
+      document.getElementById('loginForm').reset();
+      document.getElementById('loginForm').email.value = 'admin@recraftlife.com';
+      document.getElementById('loginForm').password.value = 'Admin@2024!';
+    }
+
+    // Check if already logged in
+    window.addEventListener('load', () => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('dashboard').classList.add('active');
+      }
+    });
+  </script>
+</body>
+</html>
