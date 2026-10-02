@@ -7,21 +7,21 @@ const users = [
   {
     id: 'u_customer_1',
     email: 'customer@recraftlife.com',
-    password: 'Customer@2024!',
+    password: 'Demo123!',
     role: 'customer',
     name: 'Jane Customer'
   },
   {
     id: 'u_admin_1',
     email: 'admin@recraftlife.com',
-    password: 'Admin@2024!',
+    password: 'Demo123!',
     role: 'admin',
     name: 'Admin User'
   },
   {
     id: 'u_collector_1',
     email: 'collector@recraftlife.com',
-    password: 'Collector@2024!',
+    password: 'Demo123!',
     role: 'collector',
     name: 'John Collector'
   }
