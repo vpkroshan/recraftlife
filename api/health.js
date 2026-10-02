@@ -1,3 +1,4 @@
+// Vercel serverless function handler
 export default function handler(req, res) {
   // Set CORS headers
   res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -14,5 +15,9 @@ export default function handler(req, res) {
     return;
   }
 
-  res.status(200).json({ message: 'RecraftLife API is running' });
+  res.status(200).json({
+    ok: true,
+    service: 'recraftlife-api',
+    timestamp: new Date().toISOString()
+  });
 }
