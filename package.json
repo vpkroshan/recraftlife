@@ -1,0 +1,12 @@
+{
+  "name": "recraftlife",
+  "version": "1.0.0",
+  "description": "E-Waste Recycling Platform",
+  "scripts": {
+    "install-all": "cd frontend/admin && npm install",
+    "build": "cd frontend/admin && npm install && npm run build",
+    "dev": "cd frontend/admin && npm run dev"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
