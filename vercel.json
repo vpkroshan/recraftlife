@@ -1,10 +1,7 @@
 {
   "buildCommand": "cd frontend/admin && npm install && npm run build",
   "outputDirectory": "frontend/admin/dist",
-  "env": [
-    {
-      "key": "VITE_API_BASE_URL",
-      "value": "https://recraftlife.vercel.app"
-    }
-  ]
+  "env": {
+    "VITE_API_BASE_URL": "https://recraftlife.vercel.app"
+  }
 }
