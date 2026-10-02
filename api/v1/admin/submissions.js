@@ -13,30 +13,46 @@ const submissions = [
     model: 'iPhone 12',
     description: 'Cracked screen, charger included',
     condition: 'good',
-    offer: { id: 'of_001', value: 45, currency: 'USD', status: 'sent' },
+    offer: {
+      id: 'of_001',
+      value: 45,
+      currency: 'USD',
+      status: 'sent'
+    },
     createdAt: new Date().toISOString()
   }
 ];
 
-function verifyToken(authHeader) {
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+function verifyToken(header) {
+  if (!header || !header.startsWith('Bearer ')) {
     throw new Error('Unauthorized');
   }
+
   try {
-    return jwt.verify(authHeader.slice(7), JWT_SECRET);
-  } catch (error) {
+    return jwt.verify(header.slice(7), JWT_SECRET);
+  } catch {
     throw new Error('Invalid token');
   }
 }
 
 export default function handler(req, res) {
+  const allowedOrigins = [
+    'https://recraftlife.vercel.app',
+    'http://localhost:5173',
+    'https://recraftlife.com',
+    'http://recraftlife.com'
+  ];
+
+  const origin = req.headers.origin;
+  const allowedOrigin = allowedOrigins.includes(origin) ? origin : 'https://recraftlife.vercel.app';
+
+  res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
 
   if (req.method === 'OPTIONS') {
-    res.status(200).end();
+    res.status(204).end();
     return;
   }
 
@@ -46,8 +62,12 @@ export default function handler(req, res) {
 
   try {
     verifyToken(req.headers.authorization);
-    res.status(200).json({ data: submissions, total: submissions.length });
+
+    return res.status(200).json({
+      data: submissions,
+      total: submissions.length
+    });
   } catch (error) {
-    res.status(401).json({ error: error.message });
+    return res.status(401).json({ error: error.message });
   }
 }
