@@ -1,7 +1,9 @@
 {
   "buildCommand": "cd frontend/admin && npm install && npm run build",
   "outputDirectory": "frontend/admin/dist",
- 
+  "env": {
+    "JWT_SECRET": "your-secret-here"
+  },
   "rewrites": [
     { "source": "/api/:path*", "destination": "/api/:path*" },
     { "source": "/:path*", "destination": "/index.html" }
